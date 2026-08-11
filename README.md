@@ -1,7 +1,7 @@
 # Didban ADMS
 
 <p align="center">
-  <img src="zkteco-adms-listener/static/assets/didban-hero-scene.svg" alt="Didban ADMS" width="100%">
+  <img src="zkteco-adms-listener/static/assets/didban-readme-hero.svg" alt="دیدبان — وضعیت دستگاه‌ها، کارکنان و داده‌های هویتی را از یک مرکز کنترل کنید." width="100%">
 </p>
 
 Didban is a self-hosted control plane for ZKTeco attendance devices using the
