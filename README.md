@@ -1,5 +1,9 @@
 # Didban ADMS
 
+<p align="center">
+  <img src="zkteco-adms-listener/static/assets/didban-hero-scene.svg" alt="Didban ADMS" width="100%">
+</p>
+
 Didban is a self-hosted control plane for ZKTeco attendance devices using the
 ADMS HTTP push/poll protocol. It receives device traffic, separates records by
 serial number, stores employees, biometrics, attendance, and command results,
@@ -20,7 +24,6 @@ and provides a Persian RTL browser dashboard for day-to-day operations.
 
 - `zkteco-adms-listener/server.py` — dependency-free ADMS server and JSON API.
 - `zkteco-adms-listener/static/` — RTL dashboard, styles, and local assets.
-- `docs/` — concise project guidance and workspace orientation.
 
 ## Run Locally
 
