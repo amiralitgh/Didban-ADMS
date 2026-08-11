@@ -743,21 +743,57 @@ function renderCommandOutput(commands, results) {
   if (!output) return;
   const events = [];
   commands.forEach((item) => {
+    const commandLabel = String(item.command_text || "عملیات دستگاه").trim();
     events.push({
       timestamp: item.ts_created,
-      html: `<div class="log-line command">#${escapeHtml(item.id)} · ${escapeHtml(statusLabel(item.status))} · ${escapeHtml(item.command_text)}</div>`
+      html: `
+        <article class="operation-event command">
+          <div class="operation-event-meta">
+            <strong class="operation-event-kind">ثبت در صف</strong>
+            <time class="operation-event-time" dir="ltr">${escapeHtml(formatTime(item.ts_created))}</time>
+          </div>
+          <div class="operation-event-content">
+            <div class="operation-event-title" dir="ltr">#${escapeHtml(item.id)} · ${escapeHtml(statusLabel(item.status))}</div>
+            <div class="operation-event-detail" dir="ltr">${renderCopyableTerms(commandLabel)}</div>
+          </div>
+        </article>`
     });
+    if (item.ts_sent) {
+      events.push({
+        timestamp: item.ts_sent,
+        html: `
+          <article class="operation-event sent">
+            <div class="operation-event-meta">
+              <strong class="operation-event-kind">ارسال به دستگاه</strong>
+              <time class="operation-event-time" dir="ltr">${escapeHtml(formatTime(item.ts_sent))}</time>
+            </div>
+            <div class="operation-event-content">
+              <div class="operation-event-title" dir="ltr">#${escapeHtml(item.id)} · درخواست دریافت شد</div>
+              <div class="operation-event-detail">دستگاه درخواست را دریافت کرده است.</div>
+            </div>
+          </article>`
+      });
+    }
   });
   results.forEach((item) => {
     const returnCode = item.return_code === null || item.return_code === undefined
       ? "بدون کد"
       : item.return_code;
     const isError = Number(item.return_code) !== 0 && item.return_code !== null;
-    const lineClass = isError ? "error" : "response";
     const body = String(item.raw_body || item.cmd || "").slice(0, 4000);
     events.push({
       timestamp: item.ts,
-      html: `<div class="log-line ${lineClass}">#${escapeHtml(item.cmd_id ?? "؟")} · return=${escapeHtml(returnCode)} · ${escapeHtml(body || "پاسخ خالی")}</div>`
+      html: `
+        <article class="operation-event ${isError ? "error" : "response"}">
+          <div class="operation-event-meta">
+            <strong class="operation-event-kind">${isError ? "خطای دستگاه" : "پاسخ دستگاه"}</strong>
+            <time class="operation-event-time" dir="ltr">${escapeHtml(formatTime(item.ts))}</time>
+          </div>
+          <div class="operation-event-content">
+            <div class="operation-event-title" dir="ltr">#${escapeHtml(item.cmd_id ?? "؟")} · return=${escapeHtml(returnCode)}</div>
+            <div class="operation-event-detail" dir="ltr">${renderCopyableTerms(body || "پاسخ خالی")}</div>
+          </div>
+        </article>`
     });
   });
   events.sort((left, right) => String(left.timestamp || "").localeCompare(String(right.timestamp || "")));

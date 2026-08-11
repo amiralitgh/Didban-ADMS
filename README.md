@@ -61,11 +61,14 @@ python3 -m py_compile zkteco-adms-listener/server.py
 curl -fsS http://127.0.0.1:8090/healthz
 ```
 
-The SQLite database and uploaded device payloads are runtime data and are not
-committed to Git.
+During operation, the listener uses SQLite for local persistence and a
+server-side upload directory for ADMS file payloads. These runtime paths are
+created under the application directory and can be backed up according to the
+deployment environment.
 
-## Production
+## Deployment
 
-The deployment is environment-specific. See `zkteco-adms-listener/README.md`
-for the application entry point; keep infrastructure details, credentials, and
-operational handoff notes outside this public repository.
+The application can run as a standalone Python service or behind a reverse
+proxy. Use `zkteco-adms-listener/README.md` as the starting point for local
+deployment, then adapt networking, persistence, and authentication settings to
+the target environment.
