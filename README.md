@@ -20,9 +20,7 @@ and provides a Persian RTL browser dashboard for day-to-day operations.
 
 - `zkteco-adms-listener/server.py` — dependency-free ADMS server and JSON API.
 - `zkteco-adms-listener/static/` — RTL dashboard, styles, and local assets.
-- `docs/ADMS_STATUS_AND_HANDOFF.md` — validated behavior and operational handoff.
-- `docs/MULTI_DEVICE_OPERATOR_WORKFLOW.md` — operator workflows and limitations.
-- `archive/` — local reference material; intentionally excluded from releases.
+- `docs/` — concise project guidance and workspace orientation.
 
 ## Run Locally
 
@@ -65,6 +63,6 @@ committed to Git.
 
 ## Production
 
-The current deployment uses `/path/to/didban/` behind Nginx at
-`your-host.example`. See `zkteco-adms-listener/README.md` and the operational
-handoff for deployment details, firmware caveats, and backup procedures.
+The deployment is environment-specific. See `zkteco-adms-listener/README.md`
+for the application entry point; keep infrastructure details, credentials, and
+operational handoff notes outside this public repository.
