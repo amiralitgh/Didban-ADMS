@@ -58,6 +58,40 @@ function escapeHtml(value) {
   }[character]));
 }
 
+function renderCopyableTerms(value, maxValueLength = 22) {
+  const source = String(value ?? "");
+  return source.split(/(\s+)/u).map((part) => {
+    const match = part.match(/^([^=\s]+)=(.+)$/u);
+    if (!match || match[2].length <= maxValueLength) return escapeHtml(part);
+    const previewLength = Math.max(8, maxValueLength - 3);
+    const preview = `${match[1]}=${match[2].slice(0, previewLength)}...`;
+    return `<button type="button" class="copy-value-pill" title="${escapeHtml(part)}" data-copy-value="${escapeHtml(part)}">${escapeHtml(preview)}</button>`;
+  }).join("");
+}
+
+async function copyValueFromPill(pill) {
+  const value = pill.dataset.copyValue || "";
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(value);
+    } else {
+      const helper = document.createElement("textarea");
+      helper.value = value;
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.select();
+      document.execCommand("copy");
+      helper.remove();
+    }
+    pill.classList.add("copied");
+    notify("مقدار کامل کپی شد.");
+    window.setTimeout(() => pill.classList.remove("copied"), 1200);
+  } catch {
+    notify("کپی مقدار ممکن نشد.", true);
+  }
+}
+
 const svgIconPaths = {
   refresh: '<path d="M20 11a8 8 0 0 0-14.9-3.9L4 9"/><path d="M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14.9 3.9L20 15"/><path d="M20 20v-5h-5"/>',
   download: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/>',
@@ -798,7 +832,7 @@ function renderCommandTable(commands) {
       <td data-label="وضعیت">${statusBadge(item.status)}</td>
       <td data-label="ایجاد">${escapeHtml(formatTime(item.ts_created))}</td>
       <td data-label="ارسال">${escapeHtml(formatTime(item.ts_sent))}</td>
-      <td data-label="شرح عملیات" class="raw-cell" title="${escapeHtml(item.command_text)}">${escapeHtml(item.command_text)}</td>
+      <td data-label="شرح عملیات" class="raw-cell" title="${escapeHtml(item.command_text)}">${renderCopyableTerms(item.command_text)}</td>
     </tr>
   `).join("");
 }
@@ -930,7 +964,7 @@ async function loadBiometrics() {
       <td data-label="شماره ثبت" dir="ltr">${escapeHtml(item.template_no || "—")}</td>
       <td data-label="دستگاه" dir="ltr">${escapeHtml(item.sn)}</td>
       <td data-label="زمان دریافت">${escapeHtml(formatTime(item.ts))}</td>
-      <td data-label="جزئیات فنی" class="raw-cell" title="${escapeHtml(item.raw_line)}">${escapeHtml(item.raw_line)}</td>
+      <td data-label="جزئیات فنی" class="raw-cell" title="${escapeHtml(item.raw_line)}">${renderCopyableTerms(item.raw_line)}</td>
     </tr>
   `).join("");
 }
@@ -955,9 +989,9 @@ async function loadAttendance() {
       <td data-label="زمان تردد" dir="ltr">${escapeHtml(item.event_time || "ثبت نشده")}</td>
       <td data-label="دستگاه" dir="ltr">${escapeHtml(item.sn || "—")}</td>
       <td data-label="وضعیت" dir="ltr">${escapeHtml(item.status || "—")}</td>
-      <td data-label="روش تأیید" dir="ltr">${escapeHtml(item.verify || "—")}</td>
+      <td data-label="روش تأیید" dir="ltr">${renderCopyableTerms(item.verify || "—")}</td>
       <td data-label="ثبت دریافت">${escapeHtml(formatTime(item.ts))}</td>
-      <td data-label="متن خام دستگاه" class="raw-cell" title="${escapeHtml(item.raw_line)}">${escapeHtml(item.raw_line)}</td>
+      <td data-label="متن خام دستگاه" class="raw-cell" title="${escapeHtml(item.raw_line)}">${renderCopyableTerms(item.raw_line)}</td>
     </tr>
   `).join("");
 }
@@ -978,8 +1012,8 @@ async function loadTraffic() {
       <td data-label="روش" dir="ltr">${escapeHtml(item.method)}</td>
       <td data-label="مسیر" dir="ltr">${escapeHtml(item.path)}</td>
       <td data-label="دستگاه" dir="ltr">${escapeHtml(item.sn || "—")}</td>
-      <td data-label="پارامترها" class="raw-cell">${escapeHtml(item.query_json)}</td>
-      <td data-label="نمونه متن" class="raw-cell">${escapeHtml((item.body || "").split("\n")[0])}</td>
+      <td data-label="پارامترها" class="raw-cell">${renderCopyableTerms(item.query_json)}</td>
+      <td data-label="نمونه متن" class="raw-cell">${renderCopyableTerms((item.body || "").split("\n")[0])}</td>
     </tr>
   `).join("");
 }
@@ -1444,6 +1478,12 @@ function bindEvents() {
   enhanceSelects();
   enhanceNavIcons();
   enhanceButtonIcons();
+  document.addEventListener("click", (event) => {
+    const pill = event.target.closest(".copy-value-pill");
+    if (!pill) return;
+    event.preventDefault();
+    copyValueFromPill(pill);
+  });
   $$("dialog").forEach((dialog) => {
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) dialog.close("cancel");

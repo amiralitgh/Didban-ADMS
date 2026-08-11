@@ -1535,9 +1535,9 @@ td {
   border-bottom: 1px solid var(--line);
   text-align: right;
   vertical-align: top;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 th {
@@ -1629,11 +1629,46 @@ tbody tr:hover {
 
 .raw-cell {
   max-width: none;
+  overflow: hidden;
   overflow-wrap: anywhere;
-  word-break: break-word;
   direction: ltr;
   text-align: left;
   white-space: normal;
+}
+
+.copy-value-pill {
+  display: inline-flex;
+  max-width: min(100%, 280px);
+  align-items: center;
+  margin: 0 2px;
+  padding: 2px 8px;
+  overflow: hidden;
+  color: var(--primary-dark);
+  border: 1px solid #c9dcec;
+  border-radius: 999px;
+  background: #eaf3fb;
+  font: inherit;
+  line-height: 1.6;
+  text-align: left;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: copy;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.copy-value-pill:hover,
+.copy-value-pill:focus-visible {
+  color: #17324a;
+  border-color: #9dbbd4;
+  background: #dcecf9;
+  outline: none;
+}
+
+.copy-value-pill.copied {
+  color: #356d24;
+  border-color: #b6d49b;
+  background: #edf8e8;
 }
 
 .mini-actions {
@@ -2740,7 +2775,6 @@ dialog::backdrop {
     max-width: 100%;
     overflow: visible;
     overflow-wrap: anywhere;
-    word-break: break-word;
     white-space: normal;
   }
 
