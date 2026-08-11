@@ -57,14 +57,8 @@ It also exposes app-facing JSON APIs:
 - `POST /api/users/copy` (copy one source user to selected devices)
 - `POST /api/users/copy-many` (copy selected PINs to selected devices)
 
-Open `http://YOUR_SERVER_HOST:8090/` for the dashboard after starting the server.
-
-## Production deployment
-
-The persistent deployment copy lives at `/path/to/didban/` and is served by
-the `didban` container. Existing devices can continue using
-`http://YOUR_SERVER_HOST:8090`; operators should use `http://your-host.example` after the
-LAN DNS record `your-host.example → YOUR_SERVER_HOST` is added.
+Open `http://127.0.0.1:8090/` for the dashboard after starting the server.
+Use your own reachable hostname or address when configuring a device.
 
 ## Queue command
 
@@ -86,12 +80,12 @@ curl -s -X POST http://127.0.0.1:8090/api/users/query \
 # queue add user
 curl -s -X POST http://127.0.0.1:8090/api/users \
   -H 'Content-Type: application/json' \
-  -d '{"sn":"YOUR_DEVICE_SERIAL","pin":"100001","name":"AUTO 100001","password":"100001","privilege":"0","dual_mode":true}' | jq .
+  -d '{"sn":"YOUR_DEVICE_SERIAL","pin":"100001","name":"Example User","password":"example-password","privilege":"0","dual_mode":true}' | jq .
 
 # queue update user
 curl -s -X PUT http://127.0.0.1:8090/api/users/100001 \
   -H 'Content-Type: application/json' \
-  -d '{"sn":"YOUR_DEVICE_SERIAL","name":"AUTO UPDATED","privilege":"0","password":"100001","dual_mode":true}' | jq .
+  -d '{"sn":"YOUR_DEVICE_SERIAL","name":"Example User Updated","privilege":"0","password":"example-password","dual_mode":true}' | jq .
 
 # queue delete user
 curl -s -X DELETE 'http://127.0.0.1:8090/api/users/100001?sn=YOUR_DEVICE_SERIAL&dual_mode=1' | jq .
@@ -108,8 +102,8 @@ curl -s -X POST http://127.0.0.1:8090/api/devices/YOUR_DEVICE_SERIAL/sync \
 ## Queue Rodrigo-style commands
 
 ```bash
-python3 queue_rodrigo_style.py --sn DEVICE_SN add-user --pin 100001 --name "AUTO 100001" --password "100001" --privilege 0
-python3 queue_rodrigo_style.py --sn DEVICE_SN add-extuser --pin 100001 --first-name "AUTO"
+python3 queue_rodrigo_style.py --sn DEVICE_SN add-user --pin 100001 --name "Example User" --password "example-password" --privilege 0
+python3 queue_rodrigo_style.py --sn DEVICE_SN add-extuser --pin 100001 --first-name "Example"
 python3 queue_rodrigo_style.py --sn DEVICE_SN add-userauth --pin 100001 --timezone-id 1 --door-id 15
 python3 queue_rodrigo_style.py --sn DEVICE_SN query --table user
 python3 queue_rodrigo_style.py --sn DEVICE_SN raw --cmd "DATA QUERY tablename=templatev10,fielddesc=*,filter=*"
