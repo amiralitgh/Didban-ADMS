@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f8">
+  <title>دیدبان | مدیریت دستگاه‌ها</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/didban-icon.svg">
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <section id="login-screen" class="login-screen" hidden aria-labelledby="login-title">
+    <div class="login-stage">
+      <div class="login-panel">
+        <div class="login-brand">
+          <img src="/assets/didban-icon.svg" alt="دیدبان">
+          <div><strong>دیدبان</strong><span>مرکز مدیریت دستگاه‌ها</span></div>
+        </div>
+        <div class="login-heading">
+          <div class="eyebrow">کنترل مرکزی</div>
+          <h1 id="login-title">ورود به دیدبان</h1>
+          <p>دستگاه‌ها، کارکنان و داده‌های حضور و غیاب را از یک مرکز مدیریت کنید.</p>
+        </div>
+        <form id="login-form" class="login-form">
+          <label class="login-field">
+            <span>رمز عبور</span>
+            <input class="input login-input" name="password" type="password" autocomplete="current-password" placeholder="رمز عبور" required>
+          </label>
+          <button class="button button-primary login-submit" type="submit" data-icon="arrow">ورود به مرکز کنترل</button>
+        </form>
+        <div id="login-error" class="login-error" role="alert" hidden></div>
+        <div class="login-note">
+          <span class="login-note-dot"></span>
+          <span>دریافت‌کننده ADMS مستقل از ورود کاربر فعال می‌ماند.</span>
+        </div>
+      </div>
+      <div class="login-visual" aria-hidden="true">
+        <img class="login-scene" src="/assets/didban-hero-scene.svg" alt="">
+      </div>
+    </div>
+  </section>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-mark brand-icon" src="/assets/didban-icon.svg" alt="دیدبان">
+        <div class="brand-copy"><strong>دیدبان</strong><span>مرکز مدیریت دستگاه‌ها</span></div>
+        <button
+          id="mobile-menu-button"
+          class="mobile-menu-button"
+          type="button"
+          aria-label="باز کردن منو"
+          aria-expanded="false"
+          aria-controls="mobile-navigation"
+          data-icon="menu"
+          data-icon-only="true"
+        ></button>
+      </div>
+      <div class="sidebar-label">مدیریت</div>
+      <nav class="nav-list" id="mobile-navigation" aria-label="ناوبری اصلی">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon" data-nav-icon="device"></span><div><strong>دستگاه‌ها</strong><small>وضعیت و عملیات اصلی</small></div></button>
+        <button class="nav-item" data-view="users"><span class="nav-icon" data-nav-icon="users"></span><div><strong>کارکنان</strong><small>ساخت، ویرایش و انتقال</small></div></button>
+        <button class="nav-item" data-view="biometrics"><span class="nav-icon" data-nav-icon="fingerprint"></span><div><strong>اثر انگشت و چهره</strong><small>داده‌های هویتی</small></div></button>
+        <button class="nav-item" data-view="attendance"><span class="nav-icon" data-nav-icon="attendance"></span><div><strong>ترددها</strong><small>گزارش خام حضور و غیاب</small></div></button>
+        <button class="nav-item" data-view="commands"><span class="nav-icon" data-nav-icon="command"></span><div><strong>عملیات</strong><small>پیشرفت و گزارش اجرا</small></div></button>
+        <button class="nav-item" data-view="backups"><span class="nav-icon" data-nav-icon="archive"></span><div><strong>پشتیبان‌گیری</strong><small>خروجی و بازگردانی</small></div></button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon" data-nav-icon="settings"></span><div><strong>تنظیمات</strong><small>تغییر رمز عبور</small></div></button>
+        <button class="nav-item" data-view="traffic"><span class="nav-icon" data-nav-icon="inspect"></span><div><strong>عیب‌یابی</strong><small>ارتباطات خام ADMS</small></div></button>
+      </nav>
+      <button id="lock-app-button" class="sidebar-lock-button" type="button" data-icon="lock">قفل برنامه</button>
+      <div class="sidebar-footer">
+        <div class="connection-dot"></div>
+        <div><strong>دریافت‌کننده ADMS</strong><span id="receiver-status-sidebar">در حال بررسی…</span></div>
+      </div>
+    </aside>
+    <button
+      id="mobile-menu-backdrop"
+      class="mobile-menu-backdrop"
+      type="button"
+      aria-label="بستن منو"
+      hidden
+    ></button>
+
+    <main class="content">
+      <header class="topbar">
+        <div><div class="eyebrow">دیدبان / کنترل مرکزی</div><h1 id="page-title">دستگاه‌ها</h1></div>
+        <div class="topbar-actions">
+          <div class="live-status"><span class="live-dot"></span><span id="receiver-status-topbar">دریافت‌کننده فعال</span></div>
+          <button class="button button-primary" id="sync-all-button" data-icon="sync">همگام‌سازی همه دستگاه‌ها</button>
+          <button class="button button-quiet" id="backup-export-button" data-icon="download">دانلود پشتیبان</button>
+        </div>
+      </header>
+
+      <div id="toast" class="toast" role="status"></div>
+
+      <section class="view active" id="view-overview">
+        <section class="brand-hero" aria-labelledby="hero-title">
+          <img class="hero-scene" src="/assets/didban-hero-scene.svg" alt="" aria-hidden="true">
+          <div class="hero-copy">
+            <h2 id="hero-title">پشتیبانی و مدیریت دستگاه های حضور و غیاب</h2>
+            <p>وضعیت دستگاه‌ها، کارکنان و داده‌های هویتی را از یک مرکز کنترل کنید.</p>
+            <div class="hero-meta">
+              <span class="hero-status"><span class="hero-status-dot"></span>دریافت‌کننده ADMS فعال</span>
+            </div>
+          </div>
+        </section>
+        <div class="metric-grid">
+          <article class="metric-card"><span>دستگاه‌های ثبت‌شده</span><strong id="metric-devices">۰</strong><small>تفکیک‌شده با شماره سریال</small></article>
+          <article class="metric-card"><span>کارکنان</span><strong id="metric-users">۰</strong><small>اطلاعات دریافت‌شده</small></article>
+          <article class="metric-card"><span>اثر انگشت</span><strong id="metric-fingerprints">۰</strong><small>داده‌های ثبت‌شده</small></article>
+          <article class="metric-card"><span>چهره</span><strong id="metric-faces">۰</strong><small>داده‌های ثبت‌شده</small></article>
+        </div>
+        <div class="section-heading">
+          <div><div class="eyebrow">ناوگان دستگاه‌ها</div><h3>وضعیت فعلی</h3></div>
+          <button class="button button-quiet" id="refresh-button" data-icon="refresh">به‌روزرسانی</button>
+        </div>
+        <div class="device-card-grid" id="device-cards"></div>
+      </section>
+
+      <section class="view" id="view-users">
+        <div class="section-heading"><div><div class="eyebrow">کارکنان</div><h3>مدیریت اطلاعات پایه</h3></div><div class="toolbar"><input id="user-search" class="input input-search" placeholder="جست‌وجوی شماره یا نام"><button class="button button-quiet" id="import-button" data-icon="upload">ورود از فایل</button><button class="button button-quiet" id="export-button" data-icon="download">خروجی گرفتن</button><button class="button button-primary" id="new-user-button" data-icon="plus">کارمند جدید</button><input id="import-input" type="file" accept=".csv,.json,application/json,text/csv" hidden></div></div>
+        <div class="context-note">دستگاه مقصد را از فهرست انتخاب کنید. هر شماره پرسنلی در هر دستگاه به‌صورت مستقل نگهداری می‌شود.</div>
+        <div class="table-wrap"><table><thead><tr><th>شماره پرسنلی</th><th>نام</th><th>کارت</th><th>سطح دسترسی</th><th>داده هویتی</th><th>دستگاه</th><th>آخرین دریافت</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div>
+      </section>
+
+      <section class="view" id="view-biometrics">
+        <div class="section-heading"><div><div class="eyebrow">داده‌های هویتی</div><h3>اثر انگشت و چهره</h3></div><div class="toolbar"><input id="bio-pin" class="input" placeholder="فیلتر شماره پرسنلی"><button class="button button-quiet" id="bio-query-button" data-icon="fingerprint">دریافت از دستگاه</button><button class="button button-quiet" id="bio-export-button" data-icon="download">خروجی CSV</button></div></div>
+        <div class="context-note">اثر انگشت و چهره به‌صورت داده فنی دستگاه ذخیره می‌شوند؛ این بخش تصویر خام تولید نمی‌کند.</div>
+        <div class="table-wrap"><table><thead><tr><th>نوع داده</th><th>شماره پرسنلی</th><th>شماره ثبت</th><th>دستگاه</th><th>زمان دریافت</th><th>جزئیات فنی</th></tr></thead><tbody id="biometrics-table"></tbody></table></div>
+      </section>
+
+      <section class="view" id="view-attendance">
+        <div class="section-heading">
+          <div><div class="eyebrow">گزارش تردد</div><h3>سوابق خام حضور و غیاب</h3></div>
+          <div class="toolbar attendance-toolbar">
+            <label class="date-field"><span>از تاریخ</span><input id="attendance-start" class="input" type="date"></label>
+            <label class="date-field"><span>تا تاریخ</span><input id="attendance-end" class="input" type="date"></label>
+            <button class="button button-primary" id="attendance-load-button" data-icon="refresh">نمایش گزارش</button>
+            <button class="button button-quiet" id="attendance-export-button" data-icon="download">خروجی CSV</button>
+          </div>
+        </div>
+        <div class="attendance-filter-row">
+          <label class="context-picker attendance-device-picker">
+            <span>دستگاه‌های گزارش</span>
+            <select id="attendance-devices" multiple>
+              <option value="">همه دستگاه‌ها</option>
+            </select>
+          </label>
+        </div>
+        <div class="context-note">یک یا چند دستگاه را انتخاب کنید. اگر دستگاهی انتخاب نشود، سوابق همه دستگاه‌های شناخته‌شده نمایش داده می‌شود.</div>
+        <div class="table-wrap attendance-table-wrap"><table><thead><tr><th>شماره پرسنلی</th><th>زمان تردد</th><th>دستگاه</th><th>وضعیت</th><th>روش تأیید</th><th>ثبت دریافت</th><th>متن خام دستگاه</th></tr></thead><tbody id="attendance-table"></tbody></table></div>
+      </section>
+
+      <section class="view" id="view-commands">
+        <div class="section-heading"><div><div class="eyebrow">عملیات دستگاه</div><h3>پیشرفت و گزارش اجرا</h3></div><button class="button button-quiet" id="commands-refresh-button" data-icon="refresh">به‌روزرسانی</button></div>
+        <div class="operation-layout">
+          <section class="operation-card">
+            <div class="operation-controls">
+              <label class="operation-field"><span>دستگاه مقصد</span><select id="command-target"><option value="">انتخاب دستگاه</option></select></label>
+              <label class="operation-field wide"><span>عملیات آماده</span><select id="known-command-select"><option value="">انتخاب عملیات</option></select></label>
+              <button class="button button-primary" id="send-known-command" data-icon="play">اجرای عملیات</button>
+            </div>
+            <div class="operation-progress" id="command-process"><div class="process-empty">برای دیدن روند اجرا، یک دستگاه و عملیات را انتخاب کنید.</div></div>
+          </section>
+          <aside class="operation-log-card">
+            <div class="panel-caption"><span>گزارش پاسخ دستگاه</span><span id="operation-target-label">بدون مقصد</span></div>
+            <div class="operation-log" id="operation-log"><div class="log-line muted">پاسخ‌های دستگاه اینجا ثبت می‌شوند.</div></div>
+          </aside>
+        </div>
+        <div class="context-note">در صف یعنی منتظر ارتباط دستگاه؛ ارسال شد یعنی دستگاه درخواست را گرفته؛ تأیید شد یا خطا، نتیجه پاسخ دستگاه است.</div>
+        <div class="table-wrap"><table><thead><tr><th>شماره</th><th>دستگاه</th><th>وضعیت</th><th>ایجاد</th><th>ارسال</th><th>شرح عملیات</th></tr></thead><tbody id="commands-table"></tbody></table></div>
+      </section>
+
+      <section class="view" id="view-backups">
+        <div class="section-heading"><div><div class="eyebrow">حفاظت از داده</div><h3>پشتیبان‌گیری و بازگردانی</h3></div><button class="button button-primary" id="backup-export-page-button" data-icon="archive">دانلود ZIP همه دستگاه‌ها</button></div>
+        <div class="backup-grid">
+          <section class="backup-card">
+            <div class="backup-card-heading"><span class="backup-index">01</span><div><h4>بازگردانی از فایل ZIP</h4><p>فایل قبل از ارسال بررسی می‌شود و ناسازگاری‌ها نمایش داده می‌شوند.</p></div></div>
+            <label class="upload-zone" for="backup-input"><strong id="backup-file-label">فایل پشتیبان را انتخاب کنید</strong><span>فقط ZIP صادرشده از همین سامانه</span></label>
+            <input id="backup-input" type="file" accept=".zip,application/zip" hidden>
+            <button class="button button-quiet" id="backup-inspect-button" data-icon="inspect">بررسی فایل</button>
+            <div id="backup-inspection" class="backup-inspection"><span class="muted">هنوز فایلی بررسی نشده است.</span></div>
+          </section>
+          <section class="backup-card">
+            <div class="backup-card-heading"><span class="backup-index">02</span><div><h4>مقصد ارسال</h4><p>سوابق حضور در ZIP می‌مانند؛ فقط اطلاعات قابل ارسال به دستگاه صف می‌شوند.</p></div></div>
+            <label class="field-label">روش انتخاب دستگاه‌ها<select id="backup-restore-mode" class="input"><option value="matching">تطبیق شماره سریال با دستگاه‌های شناخته‌شده</option><option value="all">ارسال به همه دستگاه‌های شناخته‌شده</option></select></label>
+            <button class="button button-primary" id="backup-restore-button" data-icon="restore" disabled>بازگردانی و ارسال به دستگاه‌ها</button>
+            <div id="backup-progress" class="backup-progress"><div class="process-empty">بعد از بررسی فایل، نتیجه عملیات اینجا نمایش داده می‌شود.</div></div>
+          </section>
+        </div>
+        <div class="context-note warning-note">فایل پشتیبان شامل اطلاعات حساس کارکنان و داده‌های اثر انگشت/چهره است. آن را مانند اطلاعات محرمانه نگهداری کنید.</div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-heading"><div><div class="eyebrow">حساب کاربری</div><h3>تنظیمات</h3></div></div>
+        <section class="settings-card">
+          <div class="settings-card-heading">
+            <div class="settings-mark" aria-hidden="true">
+              <svg class="settings-mark-icon" viewBox="0 0 24 24" fill="none" focusable="false">
+                <rect x="5" y="10" width="14" height="10" rx="2.4"></rect>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                <circle cx="12" cy="15" r="1"></circle>
+              </svg>
+            </div>
+            <div><strong>رمز عبور</strong><p>رمز ورود به دیدبان را تغییر دهید.</p></div>
+          </div>
+          <form id="settings-password-form" class="settings-form">
+            <label class="field-label">رمز عبور جدید
+              <input class="input" name="password" type="password" minlength="8" autocomplete="new-password" placeholder="حداقل ۸ نویسه" required>
+            </label>
+            <button class="button button-primary" type="submit" data-icon="save">ذخیره رمز عبور</button>
+          </form>
+        </section>
+      </section>
+
+      <section class="view" id="view-traffic">
+        <div class="section-heading"><div><div class="eyebrow">پشتیبانی</div><h3>ارتباطات خام ADMS</h3></div><button class="button button-quiet" id="traffic-refresh-button" data-icon="refresh">به‌روزرسانی</button></div>
+        <div class="context-note">این صفحه برای بررسی ارتباط و خطاهای پروتکل است و معمولاً نیازی به تغییر آن ندارید.</div>
+        <div class="table-wrap"><table><thead><tr><th>زمان</th><th>روش</th><th>مسیر</th><th>دستگاه</th><th>پارامترها</th><th>نمونه متن</th></tr></thead><tbody id="traffic-table"></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="user-dialog"><form method="dialog" class="modal-card" id="user-form">
+    <div class="modal-header"><div><div class="eyebrow">اطلاعات پایه</div><h3 id="user-dialog-title">کارمند جدید</h3></div><button type="button" class="icon-button" data-icon="close" data-icon-only="true" data-dialog-close aria-label="بستن"></button></div>
+    <div class="help-card">اطلاعات پایه روی دستگاه ذخیره می‌شود. ثبت اثر انگشت و چهره معمولاً باید از خود دستگاه یا با داده فنی آزمایش‌شده انجام شود.</div>
+    <label class="field-label">شماره پرسنلی <span>شناسه ورود کارمند روی دستگاه</span><input name="pin" class="input" placeholder="مثلاً ۱۰۰۱" required></label>
+    <label class="field-label">نام و نام خانوادگی<input name="name" class="input" placeholder="مثلاً علی رضایی"></label>
+    <div class="form-grid">
+      <label class="field-label">کارت ورود <span>اختیاری</span><input name="card" class="input" placeholder="شماره کارت"></label>
+      <label class="field-label">رمز دستگاه <span>اختیاری</span><input name="password" class="input" placeholder="رمز عددی"></label>
+      <label class="field-label">سطح دسترسی <span>برای بیشتر کارکنان، عادی</span><select name="privilege" class="input"><option value="0">کارمند عادی</option><option value="14">مدیر دستگاه</option></select></label>
+      <label class="field-label">گروه دستگاه <span>معمولاً ۱</span><input name="group_id" class="input" value="1"></label>
+    </div>
+    <div class="modal-actions"><button type="button" class="button button-quiet" data-icon="close" data-dialog-close>انصراف</button><button class="button button-primary" id="save-user-button" data-icon="save" value="default">ذخیره و ارسال</button></div>
+  </form></dialog>
+
+  <dialog id="copy-dialog"><form method="dialog" class="modal-card" id="copy-form">
+    <div class="modal-header"><div><div class="eyebrow">انتقال کارمند</div><h3 id="copy-dialog-title">کپی به دستگاه‌ها</h3></div><button type="button" class="icon-button" data-icon="close" data-icon-only="true" data-dialog-close aria-label="بستن"></button></div>
+    <div class="help-card">اطلاعات پایه این کارمند به دستگاه‌های انتخاب‌شده ارسال می‌شود. انتقال اثر انگشت و چهره را فقط بعد از یک آزمایش موفق فعال کنید.</div>
+    <div id="copy-devices" class="device-check-list"></div>
+    <label class="device-check"><input type="checkbox" id="copy-biometrics"><span><strong>انتقال اثر انگشت و چهره ذخیره‌شده</strong><small>نتیجه به مدل و نسخه دستگاه وابسته است.</small></span></label>
+    <div class="modal-actions"><button type="button" class="button button-quiet" data-icon="close" data-dialog-close>انصراف</button><button class="button button-primary" id="copy-user-button" data-icon="copy" value="default">ارسال به دستگاه‌ها</button></div>
+  </form></dialog>
+
+  <dialog id="rename-dialog">
+    <form method="dialog" class="modal-card" id="rename-form">
+      <div class="modal-header">
+        <div><div class="eyebrow">نام‌گذاری دستگاه</div><h3 id="rename-dialog-title">تغییر نام دستگاه</h3></div>
+        <button type="button" class="icon-button" data-icon="close" data-icon-only="true" data-dialog-close aria-label="بستن"></button>
+      </div>
+      <div class="help-card">این نام فقط برای نظم بهتر در دیدبان است و شماره سریال دستگاه را تغییر نمی‌دهد.</div>
+      <label class="field-label">نام نمایشی دستگاه
+        <input name="display_name" class="input" maxlength="80" placeholder="مثلاً ورودی ساختمان مرکزی" required>
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="button button-quiet" data-icon="close" data-dialog-close>انصراف</button>
+        <button class="button button-primary" id="save-rename-button" data-icon="save" value="default">ذخیره نام</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog">
+    <form method="dialog" class="modal-card" id="confirm-form">
+      <div class="modal-header">
+        <div><div class="eyebrow">تأیید عملیات</div><h3 id="confirm-dialog-title">تأیید</h3></div>
+        <button type="button" class="icon-button" data-icon="close" data-icon-only="true" data-dialog-close aria-label="بستن"></button>
+      </div>
+      <p id="confirm-dialog-message" class="dialog-message"></p>
+      <div class="modal-actions">
+        <button type="button" class="button button-quiet" data-icon="close" data-dialog-close>انصراف</button>
+        <button class="button button-danger" id="confirm-dialog-confirm" data-icon="trash" value="default">تأیید</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/assets/app.js"></script>
+</body>
+</html>
