@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+*.log
+*.pid
+
+# Runtime database and device payloads
+adms.sqlite3
+*.sqlite3
+zkteco-adms-listener/adms.sqlite3
+zkteco-adms-listener/uploads/
+
+# Local validation artifacts
+.artifacts/
+didban-layout-*.png
+
+# Archived clone history and generated scan trees
+archive/
